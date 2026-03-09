@@ -79,16 +79,6 @@ export default function DashboardHeader({
             <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent-green)]" />
             <span className="text-xs text-[var(--muted-foreground)]">Оновлено сьогодні</span>
           </div>
-
-          <label className="flex cursor-pointer items-center gap-2 text-xs text-[var(--muted)]">
-            <input
-              type="checkbox"
-              checked={useBoilerplate}
-              onChange={(e) => onUseBoilerplateChange(e.target.checked)}
-              className="h-3.5 w-3.5 rounded border-[var(--card-border)]"
-            />
-            Тестові дані
-          </label>
         </div>
       </div>
 
@@ -100,7 +90,7 @@ export default function DashboardHeader({
             return (
               <span
                 key={key}
-                className="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)]"
+                className="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] rounded-full"
                 title={connected ? "Підключено" : "Не підключено"}
               >
                 <span

@@ -11,12 +11,12 @@ export default function KeywordsTable({ rows, summary }: KeywordsTableProps) {
   const hasData = rows?.length > 0;
 
   return (
-    <div className="rounded-lg border border-[var(--card-border)] bg-[var(--card)] p-4">
+    <div className="flex h-full flex-col rounded-lg border border-[var(--card-border)] bg-[var(--card)] p-4">
       <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--muted)]">
         Топ ключові слова
       </p>
       {!hasData ? (
-        <div className="flex h-[200px] items-center justify-center text-[var(--muted)]">–</div>
+        <div className="flex flex-1 items-center justify-center text-[var(--muted)]">–</div>
       ) : (
         <>
           <div className="overflow-x-auto">

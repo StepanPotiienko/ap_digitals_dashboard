@@ -43,7 +43,7 @@ export default function ChannelsTable({ channels }: ChannelsTableProps) {
                 <td className="py-2 pr-3 text-[var(--foreground)]">{row.channel}</td>
                 <td className="py-2 pr-3">{row.sessions.toLocaleString("uk-UA")}</td>
                 <td className="py-2 pr-3">{row.newUsers.toLocaleString("uk-UA")}</td>
-                <td className="py-2 pr-3">{row.bounceRate}%</td>
+                <td className="py-2 pr-3">{typeof row.bounceRate === 'number' ? row.bounceRate.toFixed(1) : Number(row.bounceRate).toFixed(1)}%</td>
                 <td className="py-2 pr-3">{row.avgTime}</td>
                 <td className="py-2 pr-3">{row.productViews.toLocaleString("uk-UA")}</td>
                 <td className="py-2 pr-3">{row.leads}</td>

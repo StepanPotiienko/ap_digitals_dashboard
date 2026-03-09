@@ -37,12 +37,18 @@ export default function DashboardPage() {
       to,
       useBoilerplate: String(useBoilerplate),
     });
+    
+    const startTime = performance.now();
     try {
       const res = await fetch(`/api/analytics?${params}`);
       if (!res.ok) throw new Error("Failed to fetch");
       const json: DashboardData = await res.json();
       setData(json);
-    } catch {
+      
+      const duration = performance.now() - startTime;
+      console.log(`Data fetched in ${(duration / 1000).toFixed(2)}s`);
+    } catch (err) {
+      console.error('Fetch error:', err);
       setData(null);
     } finally {
       setLoading(false);
@@ -53,10 +59,14 @@ export default function DashboardPage() {
     fetchData();
   }, [fetchData]);
 
+  // Only show full-screen loading on initial load
   if (loading && !data) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
-        <p className="text-[var(--muted)]">Завантаження…</p>
+        <div className="text-center">
+          <div className="mb-3 inline-block h-8 w-8 animate-spin rounded-full border-4 border-[var(--muted)] border-t-[var(--accent-green)]" />
+          <p className="text-[var(--muted)]">Завантаження…</p>
+        </div>
       </div>
     );
   }
@@ -73,6 +83,14 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+      {/* Loading overlay when refetching */}
+      {loading && data && (
+        <div className="fixed right-6 top-6 z-50 flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-4 py-2 shadow-lg">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--muted)] border-t-[var(--accent-green)]" />
+          <span className="text-sm text-[var(--muted)]">Оновлення...</span>
+        </div>
+      )}
+      
       <DashboardHeader
         sourceStatus={status}
         dateDays={dateDays}
@@ -85,7 +103,7 @@ export default function DashboardPage() {
 
       <main className="mx-auto max-w-[1600px] space-y-8 p-6">
         <section>
-          <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--muted)]">
+          <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-(--muted)">
             Ключові метрики залучення
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
@@ -117,7 +135,7 @@ export default function DashboardPage() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--muted)]">
+          <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-(--muted)">
             Трафік та поведінка
           </h2>
           <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch">
@@ -137,16 +155,20 @@ export default function DashboardPage() {
           <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--muted)]">
             Воронка конверсій – ВЕО соцмережі
           </h2>
-          <div className="grid gap-6 lg:grid-cols-2">
-            <FunnelChart
-              steps={d.funnel?.steps ?? []}
-              overallPercent={d.funnel?.overallConversionPercent ?? 0}
-              leadToClientPercent={d.funnel?.leadToClientPercent ?? 0}
-            />
-            <KeywordsTable
-              rows={d.keywords?.rows ?? []}
-              summary={d.keywords?.summary ?? null}
-            />
+          <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
+            <div className="h-full">
+              <FunnelChart
+                steps={d.funnel?.steps ?? []}
+                overallPercent={d.funnel?.overallConversionPercent ?? 0}
+                leadToClientPercent={d.funnel?.leadToClientPercent ?? 0}
+              />
+            </div>
+            <div className="h-full">
+              <KeywordsTable
+                rows={d.keywords?.rows ?? []}
+                summary={d.keywords?.summary ?? null}
+              />
+            </div>
           </div>
         </section>
 

@@ -16,7 +16,7 @@ function formatValue(v: number | string | null): string {
 export default function MetricCard({ title, metric }: MetricCardProps) {
   const value = formatValue(metric.value);
   const hasDelta = metric.delta != null && metric.value != null;
-  const isPct = typeof metric.value === "number" && metric.delta!.value % 1 === 0 && metric.delta!.value !== 0;
+  const isPct = hasDelta && typeof metric.value === "number" && metric.delta!.value % 1 === 0 && metric.delta!.value !== 0;
   const label = metric.delta?.label ?? "";
   const isImprovementLabel = /покращення/i.test(label);
 
