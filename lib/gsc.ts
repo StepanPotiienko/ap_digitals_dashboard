@@ -3,7 +3,8 @@ import type { DashboardData, KeywordRow } from "./analytics";
 
 const hasGscConfig = (): boolean => {
   return !!(
-    process.env.GSC_SITE_URL && process.env.GOOGLE_APPLICATION_CREDENTIALS
+    process.env.GSC_SITE_URL &&
+    (process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.GSC_CREDENTIALS_JSON)
   );
 };
 
@@ -20,10 +21,15 @@ export async function fetchGscMetrics(
   if (!hasGscConfig()) return null;
 
   try {
-    const auth = new google.auth.GoogleAuth({
-      keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-      scopes: ["https://www.googleapis.com/auth/webmasters.readonly"],
-    });
+    const auth = process.env.GSC_CREDENTIALS_JSON
+      ? new google.auth.GoogleAuth({
+          credentials: JSON.parse(process.env.GSC_CREDENTIALS_JSON),
+          scopes: ["https://www.googleapis.com/auth/webmasters.readonly"],
+        })
+      : new google.auth.GoogleAuth({
+          keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+          scopes: ["https://www.googleapis.com/auth/webmasters.readonly"],
+        });
 
     const searchconsole = google.searchconsole({
       version: "v1",

@@ -64,9 +64,13 @@ export async function fetchGa4Metrics(
   if (!hasGa4Config()) return null;
 
   try {
-    const analyticsDataClient = new BetaAnalyticsDataClient({
-      keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-    });
+    const analyticsDataClient = process.env.GA4_CREDENTIALS_JSON
+      ? new BetaAnalyticsDataClient({
+          credentials: JSON.parse(process.env.GA4_CREDENTIALS_JSON),
+        })
+      : new BetaAnalyticsDataClient({
+          keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+        });
 
     const propertyId = process.env.GA4_PROPERTY_ID!;
 
