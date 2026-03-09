@@ -1,19 +1,14 @@
-# Multi-stage Dockerfile for Next.js 16 dashboard
+# Multi-stage Dockerfile for Next.js dashboard
 
-# 1) Install deps
-FROM node:20-alpine AS deps
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci
-
-# 2) Build app
+# 1) Build app
 FROM node:20-alpine AS builder
 WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=deps /app/node_modules ./node_modules
+COPY package*.json ./
+RUN npm ci
+
 COPY . .
 
 RUN npm run build
