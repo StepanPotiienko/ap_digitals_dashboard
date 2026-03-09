@@ -5,14 +5,14 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PATH=/app/node_modules/.bin:$PATH
+ENV NODE_OPTIONS=--max-old-space-size=512
 
 COPY package*.json ./
 RUN npm ci
 
 COPY . .
 
-RUN node node_modules/next/dist/bin/next build
+RUN npm run build
 
 # 3) Production image
 FROM node:20-alpine AS runner
