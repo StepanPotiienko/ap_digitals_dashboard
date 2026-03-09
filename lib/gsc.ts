@@ -4,7 +4,8 @@ import type { DashboardData, KeywordRow } from "./analytics";
 const hasGscConfig = (): boolean => {
   return !!(
     process.env.GSC_SITE_URL &&
-    (process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.GSC_CREDENTIALS_JSON)
+    (process.env.GOOGLE_APPLICATION_CREDENTIALS ||
+      process.env.GSC_CREDENTIALS_JSON)
   );
 };
 
