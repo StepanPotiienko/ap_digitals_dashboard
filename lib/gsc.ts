@@ -103,41 +103,42 @@ export async function fetchGscMetrics(
 
     const inTop10Count = keywords.filter((k) => k.position <= 10).length;
 
-    return {
-      keyMetrics: {
-        newUsers: { value: null, delta: null, source: "GA4" },
-        leads: { value: null, delta: null, source: "GA4" },
-        bounceRate: { value: null, delta: null, source: "GA4" },
-        avgTimeOnSite: { value: null, delta: null, source: "GA4" },
-        clicksFromSearch: {
-          value: currentClicks,
-          delta:
-            previousClicks > 0
-              ? {
-                  value:
-                    ((currentClicks - previousClicks) / previousClicks) * 100,
-                  label: "vs. минулий період",
-                  isImprovement: currentClicks > previousClicks,
-                }
-              : null,
-          source: "Google Search Console",
-        },
-        impressionsInSearch: {
-          value: currentImpressions,
-          delta:
-            previousImpressions > 0
-              ? {
-                  value:
-                    ((currentImpressions - previousImpressions) /
-                      previousImpressions) *
-                    100,
-                  label: "vs. минулий період",
-                  isImprovement: currentImpressions > previousImpressions,
-                }
-              : null,
-          source: "Google Search Console",
-        },
+    const gscKeyMetrics: Pick<
+      DashboardData["keyMetrics"],
+      "clicksFromSearch" | "impressionsInSearch"
+    > = {
+      clicksFromSearch: {
+        value: currentClicks,
+        delta:
+          previousClicks > 0
+            ? {
+                value:
+                  ((currentClicks - previousClicks) / previousClicks) * 100,
+                label: "vs. минулий період",
+                isImprovement: currentClicks > previousClicks,
+              }
+            : null,
+        source: "Google Search Console",
       },
+      impressionsInSearch: {
+        value: currentImpressions,
+        delta:
+          previousImpressions > 0
+            ? {
+                value:
+                  ((currentImpressions - previousImpressions) /
+                    previousImpressions) *
+                  100,
+                label: "vs. минулий період",
+                isImprovement: currentImpressions > previousImpressions,
+              }
+            : null,
+        source: "Google Search Console",
+      },
+    };
+
+    return {
+      keyMetrics: gscKeyMetrics as DashboardData["keyMetrics"],
       keywords: {
         rows: keywords,
         summary: {
