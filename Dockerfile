@@ -5,13 +5,14 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV PATH=/app/node_modules/.bin:$PATH
 
 COPY package*.json ./
 RUN npm ci
 
 COPY . .
 
-RUN npm run build
+RUN next build
 
 # 3) Production image
 FROM node:20-alpine AS runner
