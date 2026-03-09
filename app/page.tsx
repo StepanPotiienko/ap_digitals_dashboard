@@ -121,10 +121,10 @@ export default function DashboardPage() {
             Трафік та поведінка
           </h2>
           <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch">
-            <div className="flex lg:col-span-2">
+            <div className="h-full lg:col-span-2">
               <TrafficChart data={d.traffic?.byWeek ?? []} />
             </div>
-            <div className="flex">
+            <div className="h-full">
               <TrafficDonut
                 data={d.traffic?.share ?? []}
                 total={d.traffic?.totalSessions ?? 0}

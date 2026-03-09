@@ -16,17 +16,17 @@ export default function B2BMetrics({ b2b }: B2BMetricsProps) {
     b2b.mqlToSqlConversion != null && b2b.mqlToSqlConversion >= b2b.mqlToSqlTarget;
 
   return (
-    <div className="rounded-lg border border-[var(--card-border)] bg-[var(--card)] p-4">
-      <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--muted)]">
+    <section>
+      <p className="mb-3 text-sm font-medium uppercase tracking-wide text-[var(--muted)]">
         В2В метрики для бізнес-замовників
       </p>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="rounded-lg border border-[var(--card-border)] bg-[var(--card)] p-4">
           <p className="text-xs text-[var(--muted)]">Кваліфіковані ліди (MQL)</p>
           <p className="text-xl font-semibold text-[var(--foreground)]">{formatVal(b2b.mql)}</p>
           <p className="text-xs text-[var(--muted)]">CRM + GA4 Events</p>
         </div>
-        <div>
+        <div className="rounded-lg border border-[var(--card-border)] bg-[var(--card)] p-4">
           <p className="text-xs text-[var(--muted)]">Продажні ліди (SQL)</p>
           <p className="text-xl font-semibold text-[var(--foreground)]">{formatVal(b2b.sql)}</p>
           {b2b.sqlDelta != null && (
@@ -34,7 +34,7 @@ export default function B2BMetrics({ b2b }: B2BMetricsProps) {
           )}
           <p className="text-xs text-[var(--muted)]">CRM Pipeline</p>
         </div>
-        <div>
+        <div className="rounded-lg border border-[var(--card-border)] bg-[var(--card)] p-4">
           <p className="text-xs text-[var(--muted)]">Закриті угоди</p>
           <p className="text-xl font-semibold text-[var(--foreground)]">
             {formatVal(b2b.closedDeals)}
@@ -44,7 +44,7 @@ export default function B2BMetrics({ b2b }: B2BMetricsProps) {
           )}
           <p className="text-xs text-[var(--muted)]">CRM - Closed Won</p>
         </div>
-        <div>
+        <div className="rounded-lg border border-[var(--card-border)] bg-[var(--card)] p-4">
           <p className="text-xs text-[var(--muted)]">Вартість ліда (CPL)</p>
           <p className="text-xl font-semibold text-[var(--foreground)]">
             {b2b.cpl != null ? `$${b2b.cpl}` : "–"}
@@ -56,7 +56,7 @@ export default function B2BMetrics({ b2b }: B2BMetricsProps) {
           )}
           <p className="text-xs text-[var(--muted)]">Бюджет / Кількість лідів</p>
         </div>
-        <div>
+        <div className="rounded-lg border border-[var(--card-border)] bg-[var(--card)] p-4">
           <p className="text-xs text-[var(--muted)]">MQL→SQL конверсія</p>
           <p className="text-xl font-semibold text-[var(--foreground)]">
             {b2b.mqlToSqlConversion != null ? `${b2b.mqlToSqlConversion}%` : "–"}
@@ -72,6 +72,6 @@ export default function B2BMetrics({ b2b }: B2BMetricsProps) {
           <p className="text-xs text-[var(--muted)]">CRM Funnel</p>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
