@@ -8,11 +8,11 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PATH=/app/node_modules/.bin:$PATH
 
 COPY package*.json ./
-RUN npm ci && ls node_modules/.bin/ | grep next || echo "--- next binary MISSING from .bin ---"
+RUN npm ci
 
 COPY . .
 
-RUN next build
+RUN node node_modules/next/dist/bin/next build
 
 # 3) Production image
 FROM node:20-alpine AS runner
