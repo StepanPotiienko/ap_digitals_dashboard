@@ -8,7 +8,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PATH=/app/node_modules/.bin:$PATH
 
 COPY package*.json ./
-RUN npm ci
+RUN npm ci && ls node_modules/.bin/ | grep next || echo "--- next binary MISSING from .bin ---"
 
 COPY . .
 
