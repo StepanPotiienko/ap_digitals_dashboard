@@ -4,14 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:ngrok": "next dev --hostname 0.0.0.0",
     "build": "next build",
     "start": "next start",
+    "ngrok": "npx ngrok http 3000",
+    "ngrok:webhook": "npx ngrok http 4000",
     "lint": "eslint"
   },
   "dependencies": {
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "recharts": "^3.8.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

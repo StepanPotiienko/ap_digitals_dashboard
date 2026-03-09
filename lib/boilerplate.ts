@@ -1,0 +1,141 @@
+import type { DashboardData, SourceConnectionStatus } from "./analytics";
+
+export function emptyDashboardData(status: SourceConnectionStatus): DashboardData {
+  const nullMetric = { value: null, delta: null, source: "-" };
+  return {
+    sourceStatus: status,
+    keyMetrics: {
+      newUsers: { ...nullMetric },
+      clicksFromSearch: { ...nullMetric },
+      impressionsInSearch: { ...nullMetric },
+      leads: { ...nullMetric },
+      bounceRate: { ...nullMetric },
+      avgTimeOnSite: { ...nullMetric },
+    },
+    traffic: { byWeek: [], share: [], totalSessions: 0 },
+    funnel: { steps: [], overallConversionPercent: 0, leadToClientPercent: 0 },
+    keywords: { rows: [], summary: null },
+    social: {
+      facebookSubscribers: { value: null },
+      instagramSubscribers: { value: null },
+      totalEngagement: { value: null },
+      engagementRate: null,
+      engagementRateTarget: 3,
+      productViewsFromSocial: { value: null },
+    },
+    channels: [],
+    b2b: {
+      mql: null,
+      sql: null,
+      closedDeals: null,
+      cpl: null,
+      mqlToSqlConversion: null,
+      mqlToSqlTarget: 30,
+    },
+  };
+}
+
+export const boilerplateDashboardData: DashboardData = {
+  sourceStatus: {
+    ga4: true,
+    gsc: true,
+    facebook: true,
+    instagram: true,
+    googleAds: false,
+    linkedInAds: false,
+  },
+  keyMetrics: {
+    newUsers: {
+      value: 1284,
+      delta: { value: 23, label: "vs. минулий місяць", isImprovement: false },
+      source: "GA4 - Acquisition",
+    },
+    clicksFromSearch: {
+      value: 3740,
+      delta: { value: 18, label: "vs. минулий місяць", isImprovement: false },
+      source: "Search Console - Clicks",
+    },
+    impressionsInSearch: {
+      value: "48.2K",
+      delta: { value: 31, label: "vs. минулий місяць", isImprovement: false },
+      source: "Search Console - Impressions",
+    },
+    leads: {
+      value: 67,
+      delta: { value: 12, label: "vs. минулий місяць", isImprovement: false },
+      source: "GA4 - Events - form_submit",
+    },
+    bounceRate: {
+      value: 42,
+      delta: { value: -6, label: "покращення", isImprovement: true },
+      source: "GA4 - Engagement - Bounce Rate",
+    },
+    avgTimeOnSite: {
+      value: "2:47",
+      delta: { value: 0.23, label: "vs. минулий місяць", isImprovement: false },
+      source: "GA4 - Engagement - Avg Duration",
+    },
+  },
+  traffic: {
+    totalSessions: 4820,
+    byWeek: [
+      { week: "Тиждень 1", organic: 1200, social: 580, direct: 340, paid: 200, total: 2320 },
+      { week: "Тиждень 2", organic: 1100, social: 520, direct: 280, paid: 180, total: 2080 },
+      { week: "Тиждень 3", organic: 1150, social: 540, direct: 300, paid: 190, total: 2180 },
+      { week: "Тиждень 4", organic: 1056, social: 517, direct: 295, paid: 182, total: 2050 },
+    ],
+    share: [
+      { source: "organic", label: "Органіка", value: 2410, percentage: 50 },
+      { source: "social", label: "Соцмережі", value: 1157, percentage: 24 },
+      { source: "direct", label: "Прямий", value: 675, percentage: 14 },
+      { source: "paid", label: "Платний", value: 482, percentage: 10 },
+    ],
+  },
+  funnel: {
+    steps: [
+      { id: "sessions", label: "Сесії", value: 4820, percentageOfSessions: 100 },
+      { id: "engaged", label: "Залучені", value: 3470, percentageOfSessions: 72 },
+      { id: "product_view", label: "Перегляд продукту", value: 1830 },
+      { id: "request", label: "Запит / Форма", value: 430 },
+      { id: "leads", label: "Ліди (кваліф)", value: 67 },
+      { id: "clients", label: "Клієнти", value: 18 },
+    ],
+    overallConversionPercent: 1.39,
+    leadToClientPercent: 26.9,
+  },
+  keywords: {
+    rows: [
+      { query: "агро цифрові рішення", clicks: 312, ctr: 8.4, position: 1.2 },
+      { query: "ap digitals agro", clicks: 287, ctr: 9.1, position: 1.8 },
+      { query: "програмне забезпечення для фермерів", clicks: 198, ctr: 4.2, position: 3.1 },
+      { query: "цифровізація сільського господарства", clicks: 156, ctr: 5.1, position: 2.4 },
+      { query: "agro software ukraine", clicks: 134, ctr: 6.2, position: 4.0 },
+    ],
+    summary: { avgCtr: 7.74, avgPosition: 4.6, queriesInTop10: 124 },
+  },
+  social: {
+    facebookSubscribers: { value: 1847, delta: 142, deltaLabel: "цього місяця" },
+    instagramSubscribers: { value: 1124, delta: 89, deltaLabel: "цього місяця" },
+    totalEngagement: { value: 18430, delta: -34, deltaLabel: "vs. минулий місяць" },
+    engagementRate: 4.2,
+    engagementRateTarget: 3,
+    productViewsFromSocial: { value: 487, delta: 27, deltaLabel: "vs. минулий місяць" },
+  },
+  channels: [
+    { channel: "Organic Search", sessions: 2506, newUsers: 882, bounceRate: 38, avgTime: "3:12", productViews: 847, leads: 31, conversion: 1.24 },
+    { channel: "Social", sessions: 1157, newUsers: 278, bounceRate: 44, avgTime: "2:05", productViews: 392, leads: 14, conversion: 1.21 },
+    { channel: "Direct", sessions: 675, newUsers: 89, bounceRate: 31, avgTime: "4:18", productViews: 287, leads: 13, conversion: 1.93 },
+    { channel: "Paid Search", sessions: 482, newUsers: 155, bounceRate: 52, avgTime: "1:47", productViews: 104, leads: 9, conversion: 1.87 },
+  ],
+  b2b: {
+    mql: 67,
+    sql: 24,
+    sqlDelta: 5,
+    closedDeals: 18,
+    closedDealsDelta: 3,
+    cpl: 38,
+    cplDelta: -4,
+    mqlToSqlConversion: 35.8,
+    mqlToSqlTarget: 30,
+  },
+};

@@ -1,64 +1,166 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useCallback, useEffect, useState } from "react";
+import type { DashboardData } from "@/lib/analytics";
+import DashboardHeader from "@/components/DashboardHeader";
+import MetricCard from "@/components/MetricCard";
+import TrafficChart from "@/components/TrafficChart";
+import TrafficDonut from "@/components/TrafficDonut";
+import FunnelChart from "@/components/FunnelChart";
+import KeywordsTable from "@/components/KeywordsTable";
+import SocialCards from "@/components/SocialCards";
+import ChannelsTable from "@/components/ChannelsTable";
+import B2BMetrics from "@/components/B2BMetrics";
+
+function getDateRange(days: number): { from: string; to: string } {
+  const to = new Date();
+  const from = new Date();
+  from.setDate(from.getDate() - days);
+  return {
+    from: from.toISOString().slice(0, 10),
+    to: to.toISOString().slice(0, 10),
+  };
+}
+
+export default function DashboardPage() {
+  const [dateDays, setDateDays] = useState(30);
+  const [updatedToday, setUpdatedToday] = useState(false);
+  const [useBoilerplate, setUseBoilerplate] = useState(true);
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    const { from, to } = getDateRange(dateDays);
+    const params = new URLSearchParams({
+      from,
+      to,
+      useBoilerplate: String(useBoilerplate),
+    });
+    try {
+      const res = await fetch(`/api/analytics?${params}`);
+      if (!res.ok) throw new Error("Failed to fetch");
+      const json: DashboardData = await res.json();
+      setData(json);
+    } catch {
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [dateDays, useBoilerplate]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  if (loading && !data) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+        <p className="text-[var(--muted)]">Завантаження…</p>
+      </div>
+    );
+  }
+
+  const d = data ?? ({} as DashboardData);
+  const status = d.sourceStatus ?? {
+    ga4: false,
+    gsc: false,
+    facebook: false,
+    instagram: false,
+    googleAds: false,
+    linkedInAds: false,
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+      <DashboardHeader
+        sourceStatus={status}
+        dateDays={dateDays}
+        onDateDaysChange={setDateDays}
+        updatedToday={updatedToday}
+        onUpdatedTodayChange={setUpdatedToday}
+        useBoilerplate={useBoilerplate}
+        onUseBoilerplateChange={setUseBoilerplate}
+      />
+
+      <main className="mx-auto max-w-[1600px] space-y-8 p-6">
+        <section>
+          <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--muted)]">
+            Ключові метрики залучення
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            <MetricCard
+              title="Нові користувачі"
+              metric={d.keyMetrics?.newUsers ?? { value: null, delta: null, source: "-" }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+            <MetricCard
+              title="Кліки з пошуку"
+              metric={d.keyMetrics?.clicksFromSearch ?? { value: null, delta: null, source: "-" }}
+            />
+            <MetricCard
+              title="Покази у пошуку"
+              metric={d.keyMetrics?.impressionsInSearch ?? { value: null, delta: null, source: "-" }}
+            />
+            <MetricCard
+              title="Ліди (форми/запити)"
+              metric={d.keyMetrics?.leads ?? { value: null, delta: null, source: "-" }}
+            />
+            <MetricCard
+              title="Показник відмов"
+              metric={d.keyMetrics?.bounceRate ?? { value: null, delta: null, source: "-" }}
+            />
+            <MetricCard
+              title="Сер. час на сайті"
+              metric={d.keyMetrics?.avgTimeOnSite ?? { value: null, delta: null, source: "-" }}
+            />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--muted)]">
+            Трафік та поведінка
+          </h2>
+          <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch">
+            <div className="flex lg:col-span-2">
+              <TrafficChart data={d.traffic?.byWeek ?? []} />
+            </div>
+            <div className="flex">
+              <TrafficDonut
+                data={d.traffic?.share ?? []}
+                total={d.traffic?.totalSessions ?? 0}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--muted)]">
+            Воронка конверсій – ВЕО соцмережі
+          </h2>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <FunnelChart
+              steps={d.funnel?.steps ?? []}
+              overallPercent={d.funnel?.overallConversionPercent ?? 0}
+              leadToClientPercent={d.funnel?.leadToClientPercent ?? 0}
+            />
+            <KeywordsTable
+              rows={d.keywords?.rows ?? []}
+              summary={d.keywords?.summary ?? null}
+            />
+          </div>
+        </section>
+
+        <section>
+          <SocialCards social={d.social ?? ({} as DashboardData["social"])} />
+        </section>
+
+        <section>
+          <ChannelsTable channels={d.channels ?? []} />
+        </section>
+
+        <section>
+          <B2BMetrics b2b={d.b2b ?? ({} as DashboardData["b2b"])} />
+        </section>
       </main>
     </div>
   );
