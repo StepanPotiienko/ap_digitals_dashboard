@@ -94,18 +94,21 @@ export async function fetchGscMetrics(
 
     // Parse keywords for top 10
     const keywords: KeywordRow[] = currentRows.slice(0, 10).map((row) => ({
-      keyword: row.keys?.[0] || "",
+      query: row.keys?.[0] || "",
       clicks: row.clicks || 0,
       impressions: row.impressions || 0,
       ctr: row.ctr ? row.ctr * 100 : 0,
       position: row.position || 0,
-      inTop10: (row.position || 0) <= 10,
     }));
 
-    const inTop10Count = keywords.filter((k) => k.inTop10).length;
+    const inTop10Count = keywords.filter((k) => k.position <= 10).length;
 
     return {
       keyMetrics: {
+        newUsers: { value: null, delta: null, source: "GA4" },
+        leads: { value: null, delta: null, source: "GA4" },
+        bounceRate: { value: null, delta: null, source: "GA4" },
+        avgTimeOnSite: { value: null, delta: null, source: "GA4" },
         clicksFromSearch: {
           value: currentClicks,
           delta:
@@ -138,11 +141,9 @@ export async function fetchGscMetrics(
       keywords: {
         rows: keywords,
         summary: {
-          totalClicks: currentClicks,
-          totalImpressions: currentImpressions,
           avgCtr: currentCtr,
           avgPosition: currentPosition,
-          inTop10: inTop10Count,
+          queriesInTop10: inTop10Count,
         },
       },
     };
