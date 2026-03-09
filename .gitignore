@@ -40,4 +40,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-*.json
+/ap-digi-4ca4aeb18ab6.json
