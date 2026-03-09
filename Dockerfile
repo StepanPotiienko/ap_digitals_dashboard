@@ -8,11 +8,11 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_OPTIONS=--max-old-space-size=512
 
 COPY package*.json ./
-RUN npm ci
+RUN npm ci && ls node_modules/.bin/next && echo "binary OK" || echo "binary MISSING"
 
 COPY . .
 
-RUN npm run build
+RUN node node_modules/next/dist/bin/next build
 
 # 3) Production image
 FROM node:20-alpine AS runner
