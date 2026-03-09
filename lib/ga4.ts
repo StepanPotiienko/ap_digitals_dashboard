@@ -144,7 +144,6 @@ export async function fetchGa4Metrics(
     const previousMetrics = metricsResponse.rows?.[1]?.metricValues || [];
 
     const sessions = parseInt(currentMetrics[2]?.value || "0");
-    const prevSessions = parseInt(previousMetrics[2]?.value || "0");
     const newUsers = parseInt(currentMetrics[1]?.value || "0");
     const prevNewUsers = parseInt(previousMetrics[1]?.value || "0");
     const bounceRate = parseFloat(currentMetrics[3]?.value || "0") * 100;
@@ -295,6 +294,16 @@ export async function fetchGa4Metrics(
                 }
               : null,
           source: "GA4 - Engagement",
+        },
+        clicksFromSearch: {
+          value: null,
+          delta: null,
+          source: "GSC",
+        },
+        impressionsInSearch: {
+          value: null,
+          delta: null,
+          source: "GSC",
         },
         avgTimeOnSite: {
           value: formatTime(avgEngagementTime),
