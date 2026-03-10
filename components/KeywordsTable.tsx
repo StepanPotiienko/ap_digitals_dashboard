@@ -34,8 +34,8 @@ export default function KeywordsTable({ rows, summary }: KeywordsTableProps) {
                   <tr key={i} className="border-b border-[var(--card-border)]/50">
                     <td className="py-2 pr-4 text-[var(--foreground)]">{row.query}</td>
                     <td className="py-2 pr-4">{row.clicks}</td>
-                    <td className="py-2 pr-4">{row.ctr}%</td>
-                    <td className="py-2">{row.position}</td>
+                    <td className="py-2 pr-4">{Number(row.ctr).toFixed(1)}%</td>
+                    <td className="py-2">{Number(row.position).toFixed(1)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -43,8 +43,8 @@ export default function KeywordsTable({ rows, summary }: KeywordsTableProps) {
           </div>
           {summary && (
             <div className="mt-3 flex flex-wrap gap-4 text-xs text-[var(--muted-foreground)]">
-              <span>Сер. CTR: {summary.avgCtr}%</span>
-              <span>Сер. позиція: {summary.avgPosition}</span>
+              <span>Сер. CTR: {Number(summary.avgCtr).toFixed(1)}%</span>
+              <span>Сер. позиція: {Number(summary.avgPosition).toFixed(1)}</span>
               <span>Запитів у топ-10: {summary.queriesInTop10}</span>
             </div>
           )}

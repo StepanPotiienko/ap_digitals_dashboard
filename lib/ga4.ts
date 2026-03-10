@@ -167,6 +167,7 @@ export async function fetchGa4Metrics(
 
     const channels: ChannelRow[] = [];
     let totalVisits = 0;
+    let totalPageViews = 0;
 
     channelResponse.rows?.forEach((row) => {
       const channelName = row.dimensionValues?.[0]?.value || "Unknown";
@@ -180,6 +181,7 @@ export async function fetchGa4Metrics(
       const channelPageViews = parseInt(row.metricValues?.[4]?.value || "0");
 
       totalVisits += channelSessions;
+      totalPageViews += channelPageViews;
 
       // Map to traffic sources
       const lowerChannel = channelName.toLowerCase();
@@ -327,6 +329,50 @@ export async function fetchGa4Metrics(
         totalSessions: sessions,
       },
       channels,
+      funnel: {
+        steps: [
+          {
+            id: "sessions",
+            label: "Сесії",
+            value: sessions,
+            percentageOfSessions: 100,
+          },
+          {
+            id: "engaged",
+            label: "Залучені",
+            value: Math.round(sessions * (1 - bounceRate / 100)),
+            percentageOfSessions: Math.round((1 - bounceRate / 100) * 100),
+          },
+          ...(totalPageViews > 0
+            ? [
+                {
+                  id: "page_views",
+                  label: "Перегляди сторінок",
+                  value: totalPageViews,
+                },
+              ]
+            : []),
+          ...(conversions > 0
+            ? [
+                {
+                  id: "conversions",
+                  label: "Ліди / Конверсії",
+                  value: conversions,
+                },
+              ]
+            : []),
+        ].filter((s) => s.value > 0),
+        overallConversionPercent:
+          sessions > 0 ? (conversions / sessions) * 100 : 0,
+        leadToClientPercent: 0,
+      },
+      social: {
+        productViewsFromSocial: {
+          value: channelMap.social.value > 0 ? channelMap.social.value : null,
+          delta: null,
+          deltaLabel: "сесій з соцмереж",
+        },
+      } as DashboardData["social"],
     };
   } catch (error) {
     console.error("GA4 API Error:", error);

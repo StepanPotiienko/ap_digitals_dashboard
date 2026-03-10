@@ -57,7 +57,7 @@ export async function fetchGscMetrics(
         startDate: formatDate(fromDate),
         endDate: formatDate(toDate),
         dimensions: ["query"],
-        rowLimit: 10,
+        rowLimit: 25,
       },
     });
 
@@ -92,8 +92,8 @@ export async function fetchGscMetrics(
     const previousClicks = previousData.clicks || 0;
     const previousImpressions = previousData.impressions || 0;
 
-    // Parse keywords for top 10
-    const keywords: KeywordRow[] = currentRows.slice(0, 10).map((row) => ({
+    // Parse keywords
+    const keywords: KeywordRow[] = currentRows.map((row) => ({
       query: row.keys?.[0] || "",
       clicks: row.clicks || 0,
       impressions: row.impressions || 0,

@@ -47,7 +47,7 @@ export default function ChannelsTable({ channels }: ChannelsTableProps) {
                 <td className="py-2 pr-3">{row.avgTime}</td>
                 <td className="py-2 pr-3">{row.productViews.toLocaleString("uk-UA")}</td>
                 <td className="py-2 pr-3">{row.leads}</td>
-                <td className="py-2 text-[var(--accent-green)]">{row.conversion}%</td>
+                <td className="py-2 text-[var(--accent-green)]">{Number(row.conversion).toFixed(1)}%</td>
               </tr>
             ))}
           </tbody>

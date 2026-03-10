@@ -16,7 +16,6 @@ function formatValue(v: number | string | null): string {
 export default function MetricCard({ title, metric }: MetricCardProps) {
   const value = formatValue(metric.value);
   const hasDelta = metric.delta != null && metric.value != null;
-  const isPct = hasDelta && typeof metric.value === "number" && metric.delta!.value % 1 === 0 && metric.delta!.value !== 0;
   const label = metric.delta?.label ?? "";
   const isImprovementLabel = /покращення/i.test(label);
 
@@ -29,10 +28,7 @@ export default function MetricCard({ title, metric }: MetricCardProps) {
           {metric.delta!.value > 0 && "▲ "}
           {metric.delta!.value < 0 && "▼ "}
           {metric.delta!.value > 0 ? "+" : ""}
-          {typeof metric.delta!.value === "number" && metric.delta!.value % 1 !== 0
-            ? metric.delta!.value.toFixed(2)
-            : metric.delta!.value}
-          {isPct ? "%" : ""}
+          {metric.delta!.value.toFixed(1)}%
           {isImprovementLabel ? ` (${label.trim()})` : ` vs. ${label.replace(/^vs\.?\s*/i, "").trim() || "минулий місяць"}`}
         </p>
       )}

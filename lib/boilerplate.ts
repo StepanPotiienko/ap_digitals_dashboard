@@ -1,6 +1,8 @@
 import type { DashboardData, SourceConnectionStatus } from "./analytics";
 
-export function emptyDashboardData(status: SourceConnectionStatus): DashboardData {
+export function emptyDashboardData(
+  status: SourceConnectionStatus,
+): DashboardData {
   const nullMetric = { value: null, delta: null, source: "-" };
   return {
     sourceStatus: status,
@@ -79,10 +81,38 @@ export const boilerplateDashboardData: DashboardData = {
   traffic: {
     totalSessions: 4820,
     byWeek: [
-      { week: "Тиждень 1", organic: 1200, social: 580, direct: 340, paid: 200, total: 2320 },
-      { week: "Тиждень 2", organic: 1100, social: 520, direct: 280, paid: 180, total: 2080 },
-      { week: "Тиждень 3", organic: 1150, social: 540, direct: 300, paid: 190, total: 2180 },
-      { week: "Тиждень 4", organic: 1056, social: 517, direct: 295, paid: 182, total: 2050 },
+      {
+        week: "Тиждень 1",
+        organic: 1200,
+        social: 580,
+        direct: 340,
+        paid: 200,
+        total: 2320,
+      },
+      {
+        week: "Тиждень 2",
+        organic: 1100,
+        social: 520,
+        direct: 280,
+        paid: 180,
+        total: 2080,
+      },
+      {
+        week: "Тиждень 3",
+        organic: 1150,
+        social: 540,
+        direct: 300,
+        paid: 190,
+        total: 2180,
+      },
+      {
+        week: "Тиждень 4",
+        organic: 1056,
+        social: 517,
+        direct: 295,
+        paid: 182,
+        total: 2050,
+      },
     ],
     share: [
       { source: "organic", label: "Органіка", value: 2410, percentage: 50 },
@@ -93,8 +123,18 @@ export const boilerplateDashboardData: DashboardData = {
   },
   funnel: {
     steps: [
-      { id: "sessions", label: "Сесії", value: 4820, percentageOfSessions: 100 },
-      { id: "engaged", label: "Залучені", value: 3470, percentageOfSessions: 72 },
+      {
+        id: "sessions",
+        label: "Сесії",
+        value: 4820,
+        percentageOfSessions: 100,
+      },
+      {
+        id: "engaged",
+        label: "Залучені",
+        value: 3470,
+        percentageOfSessions: 72,
+      },
       { id: "product_view", label: "Перегляд продукту", value: 1830 },
       { id: "request", label: "Запит / Форма", value: 430 },
       { id: "leads", label: "Ліди (кваліф)", value: 67 },
@@ -107,25 +147,87 @@ export const boilerplateDashboardData: DashboardData = {
     rows: [
       { query: "агро цифрові рішення", clicks: 312, ctr: 8.4, position: 1.2 },
       { query: "ap digitals agro", clicks: 287, ctr: 9.1, position: 1.8 },
-      { query: "програмне забезпечення для фермерів", clicks: 198, ctr: 4.2, position: 3.1 },
-      { query: "цифровізація сільського господарства", clicks: 156, ctr: 5.1, position: 2.4 },
+      {
+        query: "програмне забезпечення для фермерів",
+        clicks: 198,
+        ctr: 4.2,
+        position: 3.1,
+      },
+      {
+        query: "цифровізація сільського господарства",
+        clicks: 156,
+        ctr: 5.1,
+        position: 2.4,
+      },
       { query: "agro software ukraine", clicks: 134, ctr: 6.2, position: 4.0 },
     ],
     summary: { avgCtr: 7.74, avgPosition: 4.6, queriesInTop10: 124 },
   },
   social: {
-    facebookSubscribers: { value: 1847, delta: 142, deltaLabel: "цього місяця" },
-    instagramSubscribers: { value: 1124, delta: 89, deltaLabel: "цього місяця" },
-    totalEngagement: { value: 18430, delta: -34, deltaLabel: "vs. минулий місяць" },
+    facebookSubscribers: {
+      value: 1847,
+      delta: 142,
+      deltaLabel: "цього місяця",
+    },
+    instagramSubscribers: {
+      value: 1124,
+      delta: 89,
+      deltaLabel: "цього місяця",
+    },
+    totalEngagement: {
+      value: 18430,
+      delta: -34,
+      deltaLabel: "vs. минулий місяць",
+    },
     engagementRate: 4.2,
     engagementRateTarget: 3,
-    productViewsFromSocial: { value: 487, delta: 27, deltaLabel: "vs. минулий місяць" },
+    productViewsFromSocial: {
+      value: 487,
+      delta: 27,
+      deltaLabel: "vs. минулий місяць",
+    },
   },
   channels: [
-    { channel: "Organic Search", sessions: 2506, newUsers: 882, bounceRate: 38, avgTime: "3:12", productViews: 847, leads: 31, conversion: 1.24 },
-    { channel: "Social", sessions: 1157, newUsers: 278, bounceRate: 44, avgTime: "2:05", productViews: 392, leads: 14, conversion: 1.21 },
-    { channel: "Direct", sessions: 675, newUsers: 89, bounceRate: 31, avgTime: "4:18", productViews: 287, leads: 13, conversion: 1.93 },
-    { channel: "Paid Search", sessions: 482, newUsers: 155, bounceRate: 52, avgTime: "1:47", productViews: 104, leads: 9, conversion: 1.87 },
+    {
+      channel: "Organic Search",
+      sessions: 2506,
+      newUsers: 882,
+      bounceRate: 38,
+      avgTime: "3:12",
+      productViews: 847,
+      leads: 31,
+      conversion: 1.24,
+    },
+    {
+      channel: "Social",
+      sessions: 1157,
+      newUsers: 278,
+      bounceRate: 44,
+      avgTime: "2:05",
+      productViews: 392,
+      leads: 14,
+      conversion: 1.21,
+    },
+    {
+      channel: "Direct",
+      sessions: 675,
+      newUsers: 89,
+      bounceRate: 31,
+      avgTime: "4:18",
+      productViews: 287,
+      leads: 13,
+      conversion: 1.93,
+    },
+    {
+      channel: "Paid Search",
+      sessions: 482,
+      newUsers: 155,
+      bounceRate: 52,
+      avgTime: "1:47",
+      productViews: 104,
+      leads: 9,
+      conversion: 1.87,
+    },
   ],
   b2b: {
     mql: 67,

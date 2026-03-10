@@ -155,7 +155,7 @@ export default function DashboardPage() {
           <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--muted)]">
             Воронка конверсій – ВЕО соцмережі
           </h2>
-          <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
+          <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch">
             <div className="h-full">
               <FunnelChart
                 steps={d.funnel?.steps ?? []}
@@ -169,11 +169,10 @@ export default function DashboardPage() {
                 summary={d.keywords?.summary ?? null}
               />
             </div>
+            <div className="h-full">
+              <SocialCards social={d.social ?? ({} as DashboardData["social"])} />
+            </div>
           </div>
-        </section>
-
-        <section>
-          <SocialCards social={d.social ?? ({} as DashboardData["social"])} />
         </section>
 
         <section>

@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { hasGa4Config } from "@/lib/ga4";
 import { hasGscConfig } from "@/lib/gsc";
-import { hasMetaConfig, hasInstagramConfig } from "@/lib/meta";
+import { hasInstagramConfig, hasMetaConfig } from "@/lib/meta";
 import { hasCrmConfig } from "@/lib/crm";
 import {
   boilerplateDashboardData,
