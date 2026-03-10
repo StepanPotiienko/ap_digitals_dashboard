@@ -21,6 +21,7 @@ function MetricRow({
   barPct,
   target,
   targetLabel,
+  note,
 }: {
   label: string;
   value: string;
@@ -31,6 +32,7 @@ function MetricRow({
   barPct?: number;
   target?: string;
   targetLabel?: string;
+  note?: string;
 }) {
   return (
     <div className="rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-4 py-3">
@@ -54,6 +56,9 @@ function MetricRow({
         <div className="mt-2 h-1.5 w-full overflow-hidden rounded bg-[var(--background)]">
           <div className="h-full rounded bg-[var(--accent-green)]" style={{ width: `${Math.min(100, barPct)}%` }} />
         </div>
+      )}
+      {note && (
+        <p className="mt-0.5 text-xs text-[var(--muted)]">{note}</p>
       )}
     </div>
   );
@@ -89,8 +94,14 @@ export default function SocialCards({ social }: SocialCardsProps) {
           barPct={45}
         />
         <MetricRow
+          label="Загальне охоплення - Reach"
+          value={(social.reach?.value ?? 0).toLocaleString("uk-UA")}
+          delta={social.reach?.delta}
+          deltaLabel={social.reach?.deltaLabel}
+        />
+        <MetricRow
           label="Загальна залученість"
-          value={formatVal(social.totalEngagement.value)}
+          value={(social.totalEngagement.value ?? 0).toLocaleString("uk-UA")}
           delta={social.totalEngagement.delta}
           deltaLabel={social.totalEngagement.deltaLabel}
           deltaPositive={social.totalEngagement.delta == null || social.totalEngagement.delta >= 0}
@@ -105,9 +116,10 @@ export default function SocialCards({ social }: SocialCardsProps) {
         />
         <MetricRow
           label="Перегляди з соцмереж"
-          value={formatVal(social.productViewsFromSocial.value)}
+          value={(social.productViewsFromSocial.value ?? 0).toLocaleString("uk-UA")}
           delta={social.productViewsFromSocial.delta}
           deltaLabel={social.productViewsFromSocial.deltaLabel}
+          note="з Facebook/Instagram Analytics"
         />
       </div>
     </div>

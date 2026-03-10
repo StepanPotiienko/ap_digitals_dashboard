@@ -106,9 +106,11 @@ export type DashboardData = {
   social: {
     facebookSubscribers: SocialMetric;
     instagramSubscribers: SocialMetric;
+    reach: SocialMetric;
     totalEngagement: SocialMetric;
     engagementRate: number | null;
     engagementRateTarget: number;
+    profileViews: SocialMetric;
     productViewsFromSocial: SocialMetric;
   };
   channels: ChannelRow[];

@@ -117,10 +117,14 @@ async function fetchFacebookPageMetrics(accessToken: string): Promise<{
 async function fetchInstagramMetrics(
   accountId: string,
   accessToken: string,
+  dateFrom: string,
+  dateTo: string,
 ): Promise<{
   followers: number;
   engagement: number;
   impressions: number;
+  reach: number;
+  profileViews: number;
 } | null> {
   const appSecret = process.env.META_APP_SECRET!;
   const appSecretProof = generateAppSecretProof(accessToken, appSecret);
@@ -139,45 +143,47 @@ async function fetchInstagramMetrics(
     const accountData = await accountResponse.json();
     const followers = accountData.followers_count || 0;
 
-    // Fetch Instagram insights
-    const today = new Date();
-    const since = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-    const sinceStr = Math.floor(since.getTime() / 1000);
-    const untilStr = Math.floor(today.getTime() / 1000);
+    // Use provided date range
+    const sinceStr = Math.floor(new Date(dateFrom).getTime() / 1000);
+    const untilStr = Math.floor(new Date(dateTo).getTime() / 1000);
 
-    const insightsResponse = await fetch(
-      `https://graph.facebook.com/v21.0/${accountId}/insights?metric=impressions,reach,profile_views&period=day&since=${sinceStr}&until=${untilStr}&access_token=${accessToken}&appsecret_proof=${appSecretProof}`,
+    // reach needs time_series (no metric_type); other metrics need metric_type=total_value
+    const reachResponse = await fetch(
+      `https://graph.facebook.com/v21.0/${accountId}/insights?metric=reach&period=day&since=${sinceStr}&until=${untilStr}&access_token=${accessToken}&appsecret_proof=${appSecretProof}`,
+    );
+    const totalValueResponse = await fetch(
+      `https://graph.facebook.com/v21.0/${accountId}/insights?metric=total_interactions,profile_views,website_clicks&metric_type=total_value&period=day&since=${sinceStr}&until=${untilStr}&access_token=${accessToken}&appsecret_proof=${appSecretProof}`,
     );
 
-    let impressions = 0;
     let reach = 0;
+    let profileViews = 0;
+    let totalInteractions = 0;
 
-    if (insightsResponse.ok) {
-      const insightsData = await insightsResponse.json();
-      const insights = insightsData.data || [];
-
-      insights.forEach((metric: any) => {
-        const values = metric.values || [];
-        const totalValue = values.reduce(
-          (sum: number, v: any) => sum + (v.value || 0),
-          0,
-        );
-
-        switch (metric.name) {
-          case "impressions":
-            impressions = totalValue;
-            break;
-          case "reach":
-            reach = totalValue;
-            break;
+    if (reachResponse.ok) {
+      const data = await reachResponse.json();
+      for (const metric of data.data ?? []) {
+        if (metric.name === "reach") {
+          reach = (metric.values ?? []).reduce(
+            (sum: number, v: any) => sum + (v.value || 0),
+            0,
+          );
         }
-      });
+      }
     }
 
-    // Estimate engagement (impressions or reach as proxy)
-    const engagement = impressions > 0 ? impressions : reach;
+    if (totalValueResponse.ok) {
+      const data = await totalValueResponse.json();
+      for (const metric of data.data ?? []) {
+        const val = metric.total_value?.value ?? 0;
+        if (metric.name === "total_interactions") totalInteractions = val;
+        if (metric.name === "profile_views") profileViews = val;
+      }
+    }
 
-    return { followers, engagement, impressions };
+    const impressions = reach; // reach as impressions proxy
+    const engagement = totalInteractions > 0 ? totalInteractions : reach;
+
+    return { followers, engagement, impressions, reach, profileViews };
   } catch (error) {
     console.error("Instagram API Error:", error);
     return null;
@@ -190,8 +196,8 @@ async function fetchInstagramMetrics(
  * @see https://developers.facebook.com/docs/instagram-platform/insights/
  */
 export async function fetchMetaSocialMetrics(
-  _dateFrom: string,
-  _dateTo: string,
+  dateFrom: string,
+  dateTo: string,
 ): Promise<Partial<DashboardData> | null> {
   if (!hasMetaConfig() && !hasInstagramConfig()) return null;
 
@@ -204,7 +210,7 @@ export async function fetchMetaSocialMetrics(
         ? fetchFacebookPageMetrics(accessToken)
         : Promise.resolve(null),
       hasInstagramConfig() && igAccountId
-        ? fetchInstagramMetrics(igAccountId, accessToken)
+        ? fetchInstagramMetrics(igAccountId, accessToken, dateFrom, dateTo)
         : Promise.resolve(null),
     ]);
 
@@ -213,17 +219,23 @@ export async function fetchMetaSocialMetrics(
     const totalEngagementValue =
       fbEng !== null || igEng !== null ? (fbEng ?? 0) + (igEng ?? 0) : null;
 
+    const igReach = instagramData?.reach ?? null;
+    const igProfileViews = instagramData?.profileViews ?? null;
+
     const fbImp = facebookData?.impressions ?? null;
     const igImp = instagramData?.impressions ?? null;
     const totalImpressions =
       fbImp !== null || igImp !== null ? (fbImp ?? 0) + (igImp ?? 0) : null;
 
+    // Engagement rate = total_interactions / reach * 100
     const engagementRate =
-      totalImpressions != null &&
-      totalImpressions > 0 &&
-      totalEngagementValue != null
-        ? (totalEngagementValue / totalImpressions) * 100
-        : null;
+      igReach != null && igReach > 0 && igEng != null
+        ? Math.round((igEng / igReach) * 1000) / 10
+        : totalImpressions != null &&
+            totalImpressions > 0 &&
+            totalEngagementValue != null
+          ? Math.round((totalEngagementValue / totalImpressions) * 1000) / 10
+          : null;
 
     return {
       social: {
@@ -237,6 +249,11 @@ export async function fetchMetaSocialMetrics(
           delta: null,
           deltaLabel: "vs. минулий місяць",
         },
+        reach: {
+          value: igReach,
+          delta: null,
+          deltaLabel: "vs. минулий місяць",
+        },
         totalEngagement: {
           value: totalEngagementValue,
           delta: null,
@@ -244,8 +261,13 @@ export async function fetchMetaSocialMetrics(
         },
         engagementRate,
         engagementRateTarget: 5.0,
+        profileViews: {
+          value: igProfileViews,
+          delta: null,
+          deltaLabel: "vs. минулий місяць",
+        },
         productViewsFromSocial: {
-          value: totalImpressions,
+          value: igReach ?? totalImpressions,
           delta: null,
           deltaLabel: "vs. минулий місяць",
         },

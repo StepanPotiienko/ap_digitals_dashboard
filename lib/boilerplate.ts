@@ -20,10 +20,12 @@ export function emptyDashboardData(
     social: {
       facebookSubscribers: { value: null },
       instagramSubscribers: { value: null },
-      totalEngagement: { value: null },
+      reach: { value: 0 },
+      totalEngagement: { value: 0 },
       engagementRate: null,
-      engagementRateTarget: 3,
-      productViewsFromSocial: { value: null },
+      engagementRateTarget: 5,
+      profileViews: { value: 0 },
+      productViewsFromSocial: { value: 0 },
     },
     channels: [],
     b2b: {
@@ -180,7 +182,17 @@ export const boilerplateDashboardData: DashboardData = {
       deltaLabel: "vs. минулий місяць",
     },
     engagementRate: 4.2,
-    engagementRateTarget: 3,
+    engagementRateTarget: 5,
+    reach: {
+      value: null,
+      delta: null,
+      deltaLabel: "vs. минулий місяць",
+    },
+    profileViews: {
+      value: 224,
+      delta: 82,
+      deltaLabel: "vs. минулий місяць",
+    },
     productViewsFromSocial: {
       value: 487,
       delta: 27,
